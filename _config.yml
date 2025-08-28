@@ -1,1 +1,18 @@
-theme: jekyll-theme-cayman
+title: "All The Numpy You'll Ever Need!"
+author: "Gaurav Mishra"
+
+repository:
+  url: https://github.com/gauravmishra/gauravmishra.github.io
+  branch: main
+  path_to_book: .
+
+# Buttons in the header + how to launch
+launch_buttons:
+  binderhub_url: "https://mybinder.org"
+  notebook_interface: "jupyterlab"   # or "classic"
+  thebe: true                        # adds the "Live Code" button
+
+html:
+  use_repository_button: true
+  use_issues_button: true
+

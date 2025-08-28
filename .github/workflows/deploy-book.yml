@@ -1,0 +1,60 @@
+name: deploy-book
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+# Needed for Pages deployments
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+      uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          pip install -U pip
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          else
+            pip install jupyter-book
+          fi
+
+      # (Optional) cache executed notebooks if you use JB caching
+      # - name: Cache executed notebooks
+      #   uses: actions/cache@v4
+      #   with:
+      #     path: _build/.jupyter_cache
+      #     key: jupyter-book-cache-${{ hashFiles('requirements.txt') }}
+
+      - name: Build the book
+        run: jupyter-book build .
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _build/html
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
